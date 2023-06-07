@@ -29,7 +29,7 @@ function TeacherSignupFormTwo({ onSubmit }: Props) {
     console.log(data, 'data >>');
     setData((data) => ({ ...data, [e.target.name]: e.target.value }));
   };
-
+  
   const handleSelect = (name: string, e: string[]) => {
     setData((data) => ({ ...data, [name]: e }));
     console.log(data, 'data >>');
@@ -42,6 +42,8 @@ function TeacherSignupFormTwo({ onSubmit }: Props) {
   const handleSchoolType = (e: string[]) => {
     return handleSelect('schoolType', e);
   };
+
+  console.log(data, "DATA")
 
   return (
     <div className="bg-[#e5e5e5] w-[1440px] min-h-full h-fit inline-block pb-[200px]">

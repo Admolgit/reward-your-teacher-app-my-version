@@ -12,7 +12,7 @@ const authReducer = createSlice({
     initialState,
     name: "auth",
     reducers: {
-        login: (state, action) => {
+        login: (state: { auth: boolean; user: any; }, action: { payload: { token: { accessToken: string; }; user: { email: string; }; }; }) => {
             
             if (action.payload){
                 localStorage.setItem("token", action.payload.token.accessToken);
