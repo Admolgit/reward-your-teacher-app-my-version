@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+input::placeholder {
+  color: #bfbfbf;
+}
+
+div.ant-tabs-tab:hover {
+  color: green;
+}
+
+div.ant-tabs-tab.ant-tabs-tab-active div.ant-tabs-tab-btn {
+  color: green;
+}
+
+div.ant-tabs-ink-bar {
+  background: green;
+}
