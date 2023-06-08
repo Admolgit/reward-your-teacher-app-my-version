@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import Ryticon from "../components/Ryticon";
+import React, { useState } from 'react';
+import Ryticon from '../components/Ryticon';
+import { useToasts } from 'react-toast-notifications';
 import { Select } from 'antd';
-import { Link } from "react-router-dom";
-
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const { Option } = Select;
 
@@ -13,23 +14,25 @@ export type FormTwoType = {
   nin: string;
 };
 const INITIAL_STATE = {
-  yearsOfTeaching: "",
+  yearsOfTeaching: '',
   subjectTaught: [],
   schoolType: [],
-  nin: "",
+  nin: '',
 };
 
 type Props = {
   onSubmit: (data: FormTwoType) => void;
-}
+};
 
-function TeacherSignupFormTwo({ onSubmit }: Props) {
+function TeacherSignupFormTwo({ onSubmit }: any) {
+  const { addToast } = useToasts();
+  const navigate = useNavigate();
   const [data, setData] = useState<FormTwoType>(INITIAL_STATE);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     console.log(data, 'data >>');
     setData((data) => ({ ...data, [e.target.name]: e.target.value }));
   };
-  
+
   const handleSelect = (name: string, e: string[]) => {
     setData((data) => ({ ...data, [name]: e }));
     console.log(data, 'data >>');
@@ -43,7 +46,42 @@ function TeacherSignupFormTwo({ onSubmit }: Props) {
     return handleSelect('schoolType', e);
   };
 
-  console.log(data, "DATA")
+  const store: any = window.localStorage.getItem('data');
+  const storeObj = JSON.parse(store);
+
+  const { fullName, email, password, school } = storeObj;
+
+  console.log(storeObj, 'Store');
+
+  const { yearsOfTeaching, subjectTaught, schoolType, nin } = data;
+
+  const accData = {
+    fullName,
+    email,
+    password,
+    school,
+    yearsOfTeaching,
+    subjectTaught,
+    schoolType,
+    nin,
+  };
+
+  console.log(accData, 'accData');
+
+  const handleRegistration = async () => {
+    try {
+      const url = `${process.env.REACT_APP_BASE_URL}/teachers/teacher-register`;
+      const res = await axios.post(url, accData);
+      console.log(res, 'res');
+      if(res.status === 201) {
+        navigate('/signin');
+      }
+      addToast("Registration Successful", { appearance: "success" })
+    } catch (error: any) {
+      const message = error?.response?.data?.message || error?.message;
+      addToast(message, { appearance: 'error' });
+    }
+  };
 
   return (
     <div className="bg-[#e5e5e5] w-[1440px] min-h-full h-fit inline-block pb-[200px]">
@@ -54,15 +92,24 @@ function TeacherSignupFormTwo({ onSubmit }: Props) {
         </h1>
       </span>
       <span className="flex justify-evenly mt-[5rem]">
-        <h2 className="mr-[5rem] text-lg font-bold text-[#21334F]">Sign Up as a Teacher</h2>
-        <h2 className="ml-[2rem] text-lg font-normal text-[#C6C3D4]">STEP 2 OF 2</h2>
+        <h2 className="mr-[5rem] text-lg font-bold text-[#21334F]">
+          Sign Up as a Teacher
+        </h2>
+        <h2 className="ml-[2rem] text-lg font-normal text-[#C6C3D4]">
+          STEP 2 OF 2
+        </h2>
       </span>
-      <form method="POST" className=" w-[745px] justify-center align-center flex-col m-auto">
+      <form
+        method="POST"
+        className=" w-[745px] justify-center align-center flex-col m-auto"
+      >
         <div className="bg-[#ffffff] justify-center items-center align-center p-[80px] m-[40px] flex-col order-1 flex-grow-0 w-[745px] mt-10 mx-auto h-[563pxpx] pb-3 inline-flex">
           <h1 className="text-[#21334f] font-semibold text-[20px] w-fit h-[22px] leading-[22px] self-start ml-[77px] mb-[10px]">
             Update your profile information
           </h1>
-          <h1 className="mr-[105px] text-sm font-normal text-[#BDBDBD]">Only you can edit and view your profile information</h1>
+          <h1 className="mr-[105px] text-sm font-normal text-[#BDBDBD]">
+            Only you can edit and view your profile information
+          </h1>
 
           <div className="flex-col my-3 max-w-md flex w-full">
             <label
@@ -81,7 +128,7 @@ function TeacherSignupFormTwo({ onSubmit }: Props) {
             />
           </div>
           <div className="flex-col my-3 max-w-md flex w-full relative">
-          {/* <img src={image} className="absolute text-lg bottom-4 right-1 z-50" /> */}
+            {/* <img src={image} className="absolute text-lg bottom-4 right-1 z-50" /> */}
             <label
               htmlFor="email"
               className="font-normal text-[14px] ml-2 leading-[15px] text-[#21334f]"
@@ -92,11 +139,10 @@ function TeacherSignupFormTwo({ onSubmit }: Props) {
               mode="tags"
               size="large"
               allowClear
-              style={{ width: '100%', marginLeft: '9px', marginTop: '10px'}}
+              style={{ width: '100%', marginLeft: '9px', marginTop: '10px' }}
               placeholder="Enter subject taught"
               onChange={handleSubjectsTaught}
-            >
-            </Select>
+            ></Select>
           </div>
           <div className="flex-col my-3 max-w-md flex w-[100%]">
             <label
@@ -109,12 +155,16 @@ function TeacherSignupFormTwo({ onSubmit }: Props) {
               mode="multiple"
               size="large"
               allowClear
-              style={{ width: '100%', marginLeft: '9px', marginTop: '10px'}}
+              style={{ width: '100%', marginLeft: '9px', marginTop: '10px' }}
               placeholder="Please select multiple.."
               onChange={handleSchoolType}
             >
-              <Option key="secondary" value="secondary">Secondary School</Option>
-              <Option key="primary" value="primary">Primary School</Option>
+              <Option key="secondary" value="secondary">
+                Secondary School
+              </Option>
+              <Option key="primary" value="primary">
+                Primary School
+              </Option>
             </Select>
           </div>
 
@@ -134,11 +184,12 @@ function TeacherSignupFormTwo({ onSubmit }: Props) {
               className="border-[1px] border-solid border-[#d9d9d9] bg-[#ffffff] m-[10px] h-[40px] w-full py-[8px] px-[16px]"
             />
           </div>
-      
+
           <button
             onClick={(e) => {
               e.preventDefault();
               onSubmit(data);
+              handleRegistration();
             }}
             className="bg-[#80b918] rounded py-[8px] px-[16px] w-[450px] h-[40px] flex-row justify-center align-center flex-grow-0  m-[2rem] ml-[3.3rem] text-[#fff] text-[18px]"
           >
@@ -146,13 +197,12 @@ function TeacherSignupFormTwo({ onSubmit }: Props) {
           </button>
 
           <p className="text-center my-[3rem]">
-            {" "}
+            {' '}
             <span>Already have an account? </span>
             <Link to="/signin">
               <span className="text-lime-600">Sign In</span>
             </Link>
           </p>
-        
         </div>
       </form>
     </div>

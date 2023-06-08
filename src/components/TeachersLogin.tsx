@@ -5,9 +5,6 @@ import { useAuth } from "../context/AuthState";
 import { useToasts } from "react-toast-notifications";
 import { Spinner } from "./Spinner";
 import {signInWithGoogle} from  './googlebutton/firebase';
-import { useDispatch, useSelector } from "react-redux";
-import { AUTH_ACTIONS } from "../store/authReducer";
-import axios from "axios";
 
 const initialLoginState = {
   email: "",
@@ -27,47 +24,19 @@ function TeachersLogin() {
   const navigate = useNavigate();
   const [data, setData] = useState(initialLoginState);
 
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-  //   setData((data) => ({ ...data, [e.target.name]: e.target.value }));
-  // };
-
-  // const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-  //   try {
-  //     e.preventDefault();
-  //     login(data);
-  //     // navigate("/teacher-dashboard");
-  //     addToast("Successfully logged in", {appearance: "success"});
-  //   } catch (error: any) {
-  //     addToast(error?.message, {appearance: "error"});
-  //   }
-  // };
-
-  const dispatch = useDispatch();
-
-  const { auth } = useSelector((state: any) => state.auth);
-
-  if (auth){
-    navigate('/teacher-dashboard');
-    return <Navigate to="/teacher-dashboard"/>
-  }
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    try {
+      e.preventDefault();
+      login(data);
+      navigate("/teacher-dashboard");
+      addToast("Successfully logged in", {appearance: "success"});
+    } catch (error: any) {
+      addToast(error?.message, {appearance: "error"});
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
   setData((data) => ({ ...data, [e.target.name]: e.target.value }))
-  }
-  //TODO Validate the Form
-  const handleSubmit = async (e: any)=>{
-    try{
-      e.preventDefault();
-      // const url = "http://localhost:3000/v1/auth/teacher-login";
-      const url = `${process.env.REACT_APP_BASE_URL}/auth/teacher-login`;
-      const res = await axios.post(url, data)
-      console.log(res)
-      dispatch(AUTH_ACTIONS.login(res.data))
-      addToast("Teacher Logged in Successfully", {appearance: "success"})
-      navigate("/teacher-dashboard")
-    } catch (error) {
-      addToast("Login Teacher Failed", {appearance: "error"})
-    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
