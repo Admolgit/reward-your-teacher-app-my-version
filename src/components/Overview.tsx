@@ -22,7 +22,7 @@ function Overview() {
         }
       }
     )
-    setAccount(response.data)
+    setAccount(response.data.balance)
   }, [email])
 
   const totalSent = useCallback(async () => {
@@ -89,7 +89,7 @@ function Overview() {
             </div>
           </div>
           <div className="py-[0.3rem] text-[30px] font-[700] leading-[48px] font-inter left-[80px] top-[59px] text-[#03435f] w-[173px]">
-            N{account.toLocaleString('en', { useGrouping: true })}
+            N {account.toLocaleString('en', { useGrouping: true })}
           </div>
           <div className="flex-row justify-center relative align-center">
             <Link to="/fund-wallet">
@@ -133,7 +133,7 @@ function Overview() {
                 Total Money Sent
               </h1>{' '}
               <h1 className="text-[#03435f] text-[30px] ml-[65px] mt-[2rem] font-[700] leading-[38.73px] font-inter">
-                N{totalReward.toLocaleString('en', { useGrouping: true })}
+                N {totalReward.toLocaleString('en', { useGrouping: true })}
               </h1>
               <p className="text-[#55a630] bg-[rgba(128,185,24,0.1)] w-[30%] text-center rounded-full px-[1%] font-[500] text-[12px] ml-[65px] font-inter leading-[15px]">
                 sent

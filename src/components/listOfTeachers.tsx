@@ -122,7 +122,7 @@ const ListOfTeachers = () => {
     
     try {
       const teacherProfile = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/teacher-profile?teacherId=${id}`,
+        `${process.env.REACT_APP_BASE_URL}/teachers/teacher-profile?teacherId=${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -133,7 +133,8 @@ const ListOfTeachers = () => {
 
       if (teacherProfile.data) {
         setIsLoadingProfile(false);
-        setProfile(teacherProfile.data);
+        console.log(teacherProfile.data, "In List")
+        setProfile(teacherProfile.data.teacher);
       }
     } catch (err: any) {
       addToast(
@@ -142,6 +143,8 @@ const ListOfTeachers = () => {
       );
     }
   };
+
+  console.log(profile, "PROFILE")
 
   return (
     <div>
