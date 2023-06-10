@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 // import { createAsyncThunk } from "@reduxjs/toolkit";
 // import { auth } from "../api/index";
 
@@ -6,30 +6,47 @@ import { createSlice } from "@reduxjs/toolkit";
 //     auth.login(data);
 // };
 
-const initialState = {auth:false, user:null};
+const initialState = { auth: false, user: null };
 
 const authReducer = createSlice({
-    initialState,
-    name: "auth",
-    reducers: {
-        login: (state: { auth: boolean; user: any; }, action: { payload: { token: { accessToken: string; }; user: { email: string; }; }; }) => {
-            
-            if (action.payload){
-                localStorage.setItem("token", action.payload.token.accessToken);
-                localStorage.setItem('email', action.payload?.user?.email);
-                state.auth = true;
-                state.user = action.payload.user;
-            }},
-            
-        logout: (state) => {
-            localStorage.removeItem("token");
-            localStorage.clear();
-            state.auth = false;
-            state.user = null;
-        }
-    }
+  initialState,
+  name: 'auth',
+  reducers: {
+    login: (
+      state: { auth: boolean; user: any },
+      action: {
+        payload: { token: { accessToken: string }; user: { email: string } };
+      },
+    ) => {
+      if (action.payload) {
+        localStorage.setItem('token', action.payload.token.accessToken);
+        localStorage.setItem('email', action.payload?.user?.email);
+        state.auth = true;
+        state.user = action.payload.user;
+      }
+    },
 
-})
+    teacherLogin: (
+      state: any,
+      action: any,
+    ) => {
+      if (action.payload) {
+        localStorage.setItem('token', action.payload.token.accessToken);
+        localStorage.setItem('email', action.payload?.teacher?.email);
+        localStorage.setItem('teacherId', action.payload?.teacher?.id);
+        state.auth = true;
+        state.user = action.payload.user;
+      }
+    },
 
-export const AUTH_ACTIONS = {...authReducer.actions};
+    logout: (state) => {
+      localStorage.removeItem('token');
+      localStorage.clear();
+      state.auth = false;
+      state.user = null;
+    },
+  },
+});
+
+export const AUTH_ACTIONS = { ...authReducer.actions };
 export default authReducer.reducer;

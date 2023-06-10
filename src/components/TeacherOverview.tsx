@@ -1,81 +1,86 @@
-import React from "react";
-import axios, { AxiosResponse } from "axios";
+import React, { useState, useEffect } from 'react';
+import axios, { AxiosResponse } from 'axios';
 
-const dummyData = [
-    {
-        message: "BabaJide sent you N10,000",
-        date: "12/12/2019",
-    },
-    {
-        message: "Jonathan sent you N20,000",
-        date: "14/12/2019",
-    },
-    {
-        message: "Olawole sent you N30,000",
-        date: "16/12/2019",
-    },
-    {
-        message: "Franklyn sent you N40,000",
-        date: "18/12/2019",
-    }
-]
-
-const MostRecent = (props: any) => {
-    return(
-        <div className="flex justify-between font-inter font-[400] text-[14px] mx-10">
-            <div className="mb-5">
-            <div className="text-[#03435F]">{props.message}</div>
-            <div className="text-[#C4C4C4]">{props.date}</div>
-            </div>
-            <div>
-            <button className="rounded-full bg-[#ecfccb] p-3 text-[#55A630]">
-                View student
-            </button>
-            </div>
-            
-        </div>
-    )
+interface notificationProps {
+  id: string;
+  content: string,
+  recieverId: string,
+  createdAt: string,
+  updatedAt: string
 }
 
-function TeacherOverview(id: any) {
-  const [balance, setBalance] = React.useState(0);
+const MostRecent = (props: any) => {
+  return (
+    <div className="flex justify-between font-inter font-[400] text-[14px] mx-10">
+      <div className="mb-5">
+        <div className="text-[#03435F]">{props.content}</div>
+        <div className="text-[#C4C4C4]">
+          Date: {props.date.split('T')[0]} Time:{' '}
+          {props.date.split('T')[1].split('.')[0]}
+        </div>
+      </div>
+      <div>
+        <button className="rounded-full bg-[#ecfccb] p-3 text-[#55A630]">
+          View student
+        </button>
+      </div>
+    </div>
+  );
+};
 
-  React.useEffect(() => {
+function TeacherOverview(id: any) {
+  const [balance, setBalance] = useState(0);
+  const [notifications, setNotifications] = useState([]);
+
+  const getBalance = async () => {
     const url = `${process.env.REACT_APP_BASE_URL}/teacher`;
-      axios
-        .get(`${url}/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        })
-        .then((response: AxiosResponse) => {
-          setBalance(response.data.balance);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    // async function getBalance() {
-    //   const response: AxiosResponse<any, any> | any = await axios.get(`${url}/${id}`, {
-    //     headers: {
-    //       Authorization: `Bearer ${localStorage.getItem("token")}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //   });
-    //   const data = await response.json();
-    //   setBalance(data.balance);
-    // }
-    // getBalance();
+    const id = localStorage.getItem('teacherId');
+    axios
+      .get(`${url}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response: AxiosResponse) => {
+        setBalance(response.data.balance);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const recentNotifications = () => {
+    const url = `${process.env.REACT_APP_BASE_URL}/teachers/notification`;
+    const id = localStorage.getItem('teacherId');
+
+    axios
+      .get(`${url}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response: AxiosResponse) => {
+        setNotifications(response.data.notification);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    getBalance();
+    recentNotifications();
   }, []);
 
-  console.log(balance);
   return (
     <div className="relative w-[80%] overflow-scroll ml-[295px] mr-[4rem] pl-[85px] h-[985px]">
       <h1 className="font-[600] text-[32px] leading-[39px] font-inter text-[#03435f] mt-[40px]">
         My Dashboard
       </h1>
       <div>
-        <div className='shadow-md shadow-zinc-200 pl-[4rem] pt-[0.5rem] mt-[3rem] rounded bg-white mb-[4rem] h-[197px]'>
+        <div className="shadow-md shadow-zinc-200 pl-[4rem] pt-[0.5rem] mt-[3rem] rounded bg-white mb-[4rem] h-[197px]">
           <svg
             className="absolute right-0"
             width="425"
@@ -114,38 +119,42 @@ function TeacherOverview(id: any) {
             </h3>
           </div>
           <div className="py-[0.3rem] text-[40px] font-[700] leading-[48px] font-inter left-[80px] text-[#03435f] w-[173px]">
-            N50,000
+            N {balance}
           </div>
           <div className="flex-row m-auto justify-center relative align-center background: text-[#C4C4C4]">
             Total Money Received
           </div>
-       
         </div>
         <div>
-          <div>
-          </div>
-      
-            <div className="rounded bg-white shadow-md shadow-zinc-200 font-inter">
-              <div className="flex justify-between mx-10 font-[600] text-[16px] items-center">
-                <div className="mt-10 text-[#03435F] font-[600] text-[16px]"><h1>Most Recent</h1></div>
-                <div className="mt-10 rounded-full w-58 h-39 bg-[#55A630]"><h1 className="text-white p-3">NEW</h1></div>
+          <div></div>
+
+          <div className="rounded bg-white shadow-md shadow-zinc-200 font-inter">
+            <div className="flex justify-between mx-10 font-[600] text-[16px] items-center">
+              <div className="mt-10 text-[#03435F] font-[600] text-[16px]">
+                <h1>Most Recent</h1>
               </div>
-              <div className="mx-10 mt-5">
-                <hr className="w-full pb-[4%]" />
-              </div>
-              <div>
-                {dummyData.map((data, index) => {
-                    return (
-                        <MostRecent key={index} message={data.message} date={data.date} />
-                    );
-                })}
+              <div className="mt-10 rounded-full w-58 h-39 bg-[#55A630]">
+                <h1 className="text-white p-3">NEW</h1>
               </div>
             </div>
-          
+            <div className="mx-10 mt-5">
+              <hr className="w-full pb-[4%]" />
+            </div>
+            <div>
+              {notifications.map((notification: notificationProps) => {
+                return (
+                  <MostRecent
+                    key={notification.id}
+                    content={notification.content}
+                    date={notification.createdAt}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
- 
+    </div>
   );
 }
 

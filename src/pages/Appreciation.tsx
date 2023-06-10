@@ -5,7 +5,7 @@ type Props = {
     onClose: () => void;
 };
 
-function Appreciation({ onClose }: Props) {
+function Appreciation({ onClose, appreciationData }: any) {
   return (
         <div className="w-[509px] h-[408px] bg-[#fff] mt-[50px] flex items-center flex-col">
 

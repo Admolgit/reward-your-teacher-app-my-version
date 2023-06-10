@@ -1,61 +1,73 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 // import { FcGoogle } from "react-icons/fc";
-import { Link, useNavigate, Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthState";
-import { useToasts } from "react-toast-notifications";
-import { Spinner } from "./Spinner";
-import {signInWithGoogle} from  './googlebutton/firebase';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthState';
+import { useToasts } from 'react-toast-notifications';
+import { AUTH_ACTIONS } from '../store/authReducer';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { Spinner } from './Spinner';
+import { signInWithGoogle } from './googlebutton/firebase';
 
 const initialLoginState = {
-  email: "",
-  password: ""
-}
+  email: '',
+  password: '',
+};
 
 export type TeachersLoginType = {
   email: string;
   password: string;
 };
 
-
 function TeachersLogin() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {loading, login} = useAuth();
+  const { loading, teacherLogin } = useAuth();
   const { addToast } = useToasts();
   const navigate = useNavigate();
   const [data, setData] = useState(initialLoginState);
 
+  const dispatch = useDispatch();
+
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
       e.preventDefault();
-      login(data);
-      navigate("/teacher-dashboard");
-      addToast("Successfully logged in", {appearance: "success"});
+      // const url = "http://localhost:3000/v1/auth/login";
+      const url = `${process.env.REACT_APP_BASE_URL}/auth/teacher-login`;
+      const res = await axios.post(url, data);
+
+      dispatch(AUTH_ACTIONS.teacherLogin(res.data));
+      addToast('Login Successful', { appearance: 'success' });
+      navigate('/teacher-dashboard');
     } catch (error: any) {
-      addToast(error?.message, {appearance: "error"});
+      const message = error?.response?.data?.message || error?.message;
+
+      addToast(message, { appearance: 'error' });
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-  setData((data) => ({ ...data, [e.target.name]: e.target.value }))
-  }
+    setData((data) => ({ ...data, [e.target.name]: e.target.value }));
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const socialSignin = (e:React.MouseEvent<HTMLButtonElement>)=>{
+  const socialSignin = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const profile = signInWithGoogle()
-    .then(profile=>{
-      if(!profile){
-        navigate('/signin')
-      }else{
-        addToast("Successfully logged in", {appearance: "success"});
-        navigate('/teacher-dashboard')
+    const profile = signInWithGoogle().then((profile) => {
+      if (!profile) {
+        navigate('/signin');
+      } else {
+        addToast('Successfully logged in', { appearance: 'success' });
+        navigate('/teacher-dashboard');
       }
-    })}
+    });
+  };
 
-  return (
-    loading ? <><Spinner /></>
-    :
+  return loading ? (
+    <>
+      <Spinner />
+    </>
+  ) : (
     <>
       <form className=" w-[745px] justify-center align-center flex-col m-auto ">
         <div className="bg-[#ffffff] justify-center items-center align-center p-[40px] flex-col order-1 flex-grow-0 w-[745px] mt-10 mx-auto pb-3 inline-flex">
@@ -110,13 +122,12 @@ function TeachersLogin() {
             <FcGoogle className=" my-0 inline-flex text-4xl m-4 text- #21334F " /> Login with Google
           </button> */}
           <p className="text-center my-[3rem]">
-            {" "}
+            {' '}
             <span>Don't have account? </span>
             <Link to="/teacher-signup">
               <span className="text-lime-600">Create account</span>
             </Link>
           </p>
-
         </div>
       </form>
     </>

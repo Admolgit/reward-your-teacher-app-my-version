@@ -49,7 +49,7 @@ function StudentsLogin() {
       const res = await axios.post(url, data)
       
       dispatch(AUTH_ACTIONS.login(res.data))
-      addToast("Login Successful", { appearance: "success" })
+      addToast("Login Successful", {appearance: "success"})
     } catch (error: any) {
       
       const message = error?.response?.data?.message || error?.message;
