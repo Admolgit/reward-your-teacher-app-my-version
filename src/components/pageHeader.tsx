@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthState';
 import Ryticon from "./Ryticon";
 import silhoutte from "../assets/silhoutte.jpeg";
 import { Link } from "react-router-dom";
+import isAuthenticated from "../authProvider/auth";
 
 function PageHeader(props: any) {
   // const [showMenu, setShowMenu] = useState(false);
@@ -15,8 +16,8 @@ function PageHeader(props: any) {
   const image= localStorage.getItem('picture');
 
   // Get username from auth
-  const { user } = useAuth();
-  const name = user?.name;
+  const { user } = isAuthenticated();
+  const name = user?.fullName;
   console.log(name)
 
   return (

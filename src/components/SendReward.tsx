@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useToasts } from "react-toast-notifications";
+import isAuthenticated from "../authProvider/auth";
+import { sendRewardToTeacher } from "../customApi/studentApi";
 
 export default function SendReward({ close }: any) {
   const [data, setData] = useState({
@@ -9,33 +11,31 @@ export default function SendReward({ close }: any) {
     senderEmail: "",
   });
   const { addToast } = useToasts();
+  const { token } = isAuthenticated();
 
-  const url = `${process.env.REACT_APP_BASE_URL}/paystack/sendreward`;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setData((data) => ({ ...data, [e.target.name]: e.target.value }));
   };
 
+  const tok = token.accessToken;
+  console.log(tok, "token")
+
   const handleSubmit = async (e: any) => {
     try {
       e.preventDefault();
-      console.log(localStorage.getItem("token"), "at add money component");
-
-      //Following Caleb's guide here
-      const res = await axios.post(`${url}`, data, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      console.log(res, "we check");
-      if (!res.data.error) {
-        close();
-        addToast(res?.data?.message, { appearance: "success" });
-      }
-      if (res?.data?.error) {
-        addToast(res?.data?.message || res?.data?.message || "no response", {
-          appearance: "error",
-        });
-      }
+      const url = `${process.env.REACT_APP_BASE_URL}/paystack/sendreward`;
+      // Following Caleb's guide here
+      const res = await sendRewardToTeacher(url, data, tok);
+      console.log(res, "RES")
+      // if (!res.data.error) {
+      //   close();
+      //   addToast(res?.data?.message, { appearance: "success" });
+      // }
+      // if (res?.data?.error) {
+      //   addToast(res?.data?.message || res?.data?.message || "no response", {
+      //     appearance: "error",
+      //   });
+      // }
     } catch (err: any) {
       addToast(err?.response?.data?.message || err?.message || "no response", {
         appearance: "error",
@@ -44,7 +44,6 @@ export default function SendReward({ close }: any) {
   };
 
   return (
-    // <div className='grid grid-cols-1 sm:grid-cols-0 h-screen w-full'>
     <div className='flex flex-col justify-center my-[10%]'>
       <form className='absolute drop-shadow-lg max-w-[509px] top-[23%] right-[20%] w-full mx-auto bg-white'>
         <div className='flex ml-[30%] items-center justify-between mt-8 px-10'>
@@ -94,6 +93,5 @@ export default function SendReward({ close }: any) {
         </button>
       </form>
     </div>
-    // </div>
   );
 }

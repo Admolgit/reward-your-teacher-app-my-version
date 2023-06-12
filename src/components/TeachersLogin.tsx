@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 // import { FcGoogle } from "react-icons/fc";
-import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthState';
 import { useToasts } from 'react-toast-notifications';
 import { AUTH_ACTIONS } from '../store/authReducer';
-import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { Spinner } from './Spinner';
-import { signInWithGoogle } from './googlebutton/firebase';
+// import { signInWithGoogle } from './googlebutton/firebase';
+import { teacherSignin } from '../customApi/authApi';
 
 const initialLoginState = {
   email: '',
@@ -31,16 +31,16 @@ function TeachersLogin() {
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
       e.preventDefault();
-      // const url = "http://localhost:3000/v1/auth/login";
+      
       const url = `${process.env.REACT_APP_BASE_URL}/auth/teacher-login`;
-      const res = await axios.post(url, data);
+      const res: any = await teacherSignin(url, data)
+      console.log(res.data, "here");
 
       dispatch(AUTH_ACTIONS.teacherLogin(res.data));
       addToast('Login Successful', { appearance: 'success' });
       navigate('/teacher-dashboard');
     } catch (error: any) {
       const message = error?.response?.data?.message || error?.message;
-
       addToast(message, { appearance: 'error' });
     }
   };
@@ -50,18 +50,18 @@ function TeachersLogin() {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const socialSignin = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const profile = signInWithGoogle().then((profile) => {
-      if (!profile) {
-        navigate('/signin');
-      } else {
-        addToast('Successfully logged in', { appearance: 'success' });
-        navigate('/teacher-dashboard');
-      }
-    });
-  };
+  // const socialSignin = (e: React.MouseEvent<HTMLButtonElement>) => {
+  //   e.preventDefault();
+  //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //   const profile = signInWithGoogle().then((profile) => {
+  //     if (!profile) {
+  //       navigate('/signin');
+  //     } else {
+  //       addToast('Successfully logged in', { appearance: 'success' });
+  //       navigate('/teacher-dashboard');
+  //     }
+  //   });
+  // };
 
   return loading ? (
     <>

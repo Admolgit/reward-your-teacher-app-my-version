@@ -37,17 +37,6 @@ export default function SendRewardProfile({profile, close, showSendReward}: any)
           {/* <div className="font-bold text-[#55A630]">Edit</div> */}
         </div>
         <div className="mt-[3%]">
-          {/* <h5 className="mb-1 text-[14px] font-[400] text-[#c4c4c4]">
-            About
-          </h5> */}
-          {/* <p className="mb-1 text-[14px] font-[400] text-[#03435F]">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Unde
-            architecto harum voluptate repellat provident deleniti, molestias
-            id, ipsa sunt omnis at, placeat adipisci. Necessitatibus, soluta
-            neque distinctio in quae molestias?
-          </p> */}
-        </div>
-        <div className="mt-[3%]">
           <h5 className="mb-1 text-[14px] font-[400] text-[#c4c4c4] ">
             Teacher Info
           </h5>

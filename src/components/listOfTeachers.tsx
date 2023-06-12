@@ -1,8 +1,9 @@
-import axios from 'axios';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToasts } from 'react-toast-notifications';
 import SendRewardProfile from './SendRewardProfile';
 import SendReward from './SendReward';
+import { listAllTeachers, listProfile } from '../customApi/teacherApi';
+import isAuthenticated from '../authProvider/auth';
 
 // types for list of teachers
 interface ListOfTeachersProps {
@@ -12,7 +13,7 @@ interface ListOfTeachersProps {
   position: string;
   startYear: string;
   endYear: string;
-  schoolType: [string]
+  schoolType: [string];
   id?: string;
 }
 
@@ -25,6 +26,7 @@ const ListOfTeachers = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [id, setId] = useState('');
   const { addToast } = useToasts();
+  const { token } = isAuthenticated();
   // *******You need the lines below to show profile stuffs***********
   //Now check your commit again and see if you need to change something
 
@@ -35,17 +37,11 @@ const ListOfTeachers = () => {
   // const url = `${process.env.REACT_APP_BASE_URL}`
   const getTeacherList = useCallback(async () => {
     try {
-      const teachers = await axios.get(
-        `${
-          process.env.REACT_APP_BASE_URL
-        }/teachers/teachers?page=${1}perPage=${10}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
+      const tok = token.accessToken;
+      const url = `${ process.env.REACT_APP_BASE_URL}/teachers/teachers?page=${1}perPage=${10}`;
+
+      const teachers = await listAllTeachers(url, tok);
+
       if (teachers.data) {
         setIsLoading(false);
         setListOfTeachers(teachers.data);
@@ -61,8 +57,6 @@ const ListOfTeachers = () => {
   useEffect(() => {
     getTeacherList();
   }, [getTeacherList]);
-
-  console.log(listOfTeachers, "LIST")
 
   // when no data is loaded, show loading
   if (isLoading) {
@@ -111,6 +105,7 @@ const ListOfTeachers = () => {
     setId(id);
     getProfile(id.toString());
   };
+
   // useEffect(() => {
   //   handleClick(id)
   // }, [showModal, id]);
@@ -121,19 +116,13 @@ const ListOfTeachers = () => {
 
   const getProfile: any = async (id: string) => {
     try {
-      const teacherProfile = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/teachers/teacher-profile?teacherId=${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
+      const tok = token.accessToken;
+      const url = `${process.env.REACT_APP_BASE_URL}/teachers/teacher-profile?teacherId=${id}`;
+
+      const teacherProfile = await listProfile(url, tok);
 
       if (teacherProfile.data) {
         setIsLoadingProfile(false);
-        console.log(teacherProfile.data, 'In List');
         setProfile(teacherProfile.data.teacher);
       }
     } catch (err: any) {
@@ -143,8 +132,6 @@ const ListOfTeachers = () => {
       );
     }
   };
-
-  console.log(profile, 'PROFILE');
 
   return (
     <div>

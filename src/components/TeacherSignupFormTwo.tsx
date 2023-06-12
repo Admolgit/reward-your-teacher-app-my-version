@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import Ryticon from '../components/Ryticon';
 import { useToasts } from 'react-toast-notifications';
 import { Select } from 'antd';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
+import { teacherRegister } from '../customApi/authApi';
 
 const { Option } = Select;
 
@@ -71,7 +71,7 @@ function TeacherSignupFormTwo({ onSubmit }: any) {
   const handleRegistration = async () => {
     try {
       const url = `${process.env.REACT_APP_BASE_URL}/teachers/teacher-register`;
-      const res = await axios.post(url, accData);
+      const res: any = await teacherRegister(url, accData);
       console.log(res, 'res');
       if(res.status === 201) {
         navigate('/signin');

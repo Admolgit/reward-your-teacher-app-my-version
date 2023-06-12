@@ -15,11 +15,11 @@ const authReducer = createSlice({
     login: (
       state: { auth: boolean; user: any },
       action: {
-        payload: { token: { accessToken: string }; user: { email: string } };
+        payload: any;
       },
     ) => {
       if (action.payload) {
-        localStorage.setItem('token', action.payload.token.accessToken);
+        localStorage.setItem('token', JSON.stringify(action.payload));
         localStorage.setItem('email', action.payload?.user?.email);
         state.auth = true;
         state.user = action.payload.user;
@@ -31,7 +31,7 @@ const authReducer = createSlice({
       action: any,
     ) => {
       if (action.payload) {
-        localStorage.setItem('token', action.payload.token.accessToken);
+        localStorage.setItem('token', JSON.stringify(action.payload));
         localStorage.setItem('email', action.payload?.teacher?.email);
         localStorage.setItem('teacherId', action.payload?.teacher?.id);
         state.auth = true;

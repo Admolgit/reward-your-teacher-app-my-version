@@ -1,41 +1,41 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 // import { FcGoogle } from "react-icons/fc";
-import { Link, useNavigate } from 'react-router-dom'
-import Ryticon from '../components/Ryticon'
-import { apiPost } from '../utils/apiHelpers'
-import { useToasts } from 'react-toast-notifications'
+import { Link, useNavigate } from 'react-router-dom';
+import Ryticon from '../components/Ryticon';
+import { apiPost } from '../utils/apiHelpers';
+import { useToasts } from 'react-toast-notifications';
 
 function Signup() {
-  const navigate = useNavigate()
-  const { addToast } = useToasts()
+  const navigate = useNavigate();
+  const { addToast } = useToasts();
   const [data, setData] = useState({ fullName: '', email: '', password: '' });
 
   const HandleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setData((data) => ({ ...data, [e.target.name]: e.target.value }))
-  }
+    setData((data) => ({ ...data, [e.target.name]: e.target.value }));
+  };
 
   const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
-      e.preventDefault()
-      const response = await apiPost('/auth/register', data, {})
-      console.log('here is it', response.data)
+      e.preventDefault();
+      const response = await apiPost('/auth/register', data, {});
+      console.log('here is it', response.data);
 
       if (response.data) {
         addToast(response?.data?.message || 'Success: Account created', {
           appearance: 'success',
-        })
-        navigate('/signin?type=student')
+        });
+        navigate('/signin?type=student');
       } else {
-        navigate('/signup')
+        navigate('/signup');
       }
     } catch (err: any) {
-        addToast(err?.response?.data?.message || err?.message || 'no response', {
+      addToast(err?.response?.data?.message || err?.message || 'no response', {
         appearance: 'error',
-      })
+      });
     }
 
     //TODO show modal of successful registration OR error in the modal if there is error.
-  }
+  };
   //   const signin =async(e:any)=>{
   //     e.preventDefault();
   //     const profile=await signInWithGoogle()
@@ -141,7 +141,7 @@ function Signup() {
         </div>
       </form>
     </div>
-  )
+  );
 }
 
-export default Signup
+export default Signup;
