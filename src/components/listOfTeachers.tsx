@@ -34,10 +34,10 @@ const ListOfTeachers = () => {
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profile, setProfile] = useState({});
-  // const url = `${process.env.REACT_APP_BASE_URL}`
+  const tok = token.accessToken;
+  
   const getTeacherList = useCallback(async () => {
     try {
-      const tok = token.accessToken;
       const url = `${ process.env.REACT_APP_BASE_URL}/teachers/teachers?page=${1}perPage=${10}`;
 
       const teachers = await listAllTeachers(url, tok);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Modal } from 'antd';
-import { apiGet } from '../utils/apiHelpers';
+import Pagination from '../Pagination/Pagination';
+import { Paginate } from '../Pagination/Paginate';
 import axios from 'axios';
 import Appreciation from '../pages/Appreciation';
 
@@ -34,8 +35,18 @@ export const TeacherNotification = () => {
   const [showModal, setShowModal] = useState(false);
   const closeModal = () => setShowModal(false);
   const [loading, setLoading] = useState(false);
+  const [count] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [teacherNotification, setTeacherNotification] = useState([]);
+
+  let dataCount = teacherNotification.length;
+
+    const Datas = Paginate(teacherNotification, currentPage, count);
+
+    const handleChange = (page: number) => {
+      setCurrentPage(page);
+    };
 
   const getTeacherNotification = useCallback(async () => {
     try {
@@ -66,6 +77,11 @@ export const TeacherNotification = () => {
   if(loading) {
     <p>Teacher notifications loading...</p>
   }
+
+  if (dataCount === 0)
+    return (
+      <div className="ml-[4rem] text-treColor2 mt-[3rem]">No data found</div>
+    );
   
   return (
     <>
@@ -80,7 +96,7 @@ export const TeacherNotification = () => {
       <div className="font-inter ml-[30%] mr-[10%] mt-[2%] w-[100%]">
         <h1 className="font-[600] text-[32px] text-[#03435F]">Notifications</h1>
         <hr className="w-[100%] mb-[5%]" />
-        {teacherNotification.map((item: any, index: number) => {
+        {Datas.map((item: any, index: number) => {
           return (
             <Notify
               key={index}
@@ -92,6 +108,12 @@ export const TeacherNotification = () => {
             />
           );
         })}
+        <Pagination
+        itemsCount={dataCount}
+        pageSize={count}
+        currentPage={currentPage}
+        onPageChange={handleChange}
+      />
       </div>
     </>
   );

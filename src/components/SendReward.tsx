@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useToasts } from "react-toast-notifications";
 import isAuthenticated from "../authProvider/auth";
 import { sendRewardToTeacher } from "../customApi/studentApi";
@@ -18,7 +17,6 @@ export default function SendReward({ close }: any) {
   };
 
   const tok = token.accessToken;
-  console.log(tok, "token")
 
   const handleSubmit = async (e: any) => {
     try {
@@ -26,16 +24,16 @@ export default function SendReward({ close }: any) {
       const url = `${process.env.REACT_APP_BASE_URL}/paystack/sendreward`;
       // Following Caleb's guide here
       const res = await sendRewardToTeacher(url, data, tok);
-      console.log(res, "RES")
-      // if (!res.data.error) {
-      //   close();
-      //   addToast(res?.data?.message, { appearance: "success" });
-      // }
-      // if (res?.data?.error) {
-      //   addToast(res?.data?.message || res?.data?.message || "no response", {
-      //     appearance: "error",
-      //   });
-      // }
+      
+      if (!res.data.error) {
+        close();
+        addToast(res?.data?.message, { appearance: "success" });
+      }
+      if (res?.data?.error) {
+        addToast(res?.data?.message || res?.data?.message || "no response", {
+          appearance: "error",
+        });
+      }
     } catch (err: any) {
       addToast(err?.response?.data?.message || err?.message || "no response", {
         appearance: "error",

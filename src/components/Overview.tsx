@@ -1,48 +1,36 @@
-import { CgAdd } from 'react-icons/cg'
-import { Link } from 'react-router-dom'
-import Image from '../assets/imageg.png'
-// import { apiPost } from "../utils/apiHelpers";
-import { useCallback, useEffect, useState } from 'react'
-import axios from 'axios'
+import { CgAdd } from 'react-icons/cg';
+import { Link } from 'react-router-dom';
+import Image from '../assets/imageg.png';
+import { useCallback, useEffect, useState } from 'react';
+import { sendRewardToTeacher } from '../customApi/studentApi';
+import isAuthenticated from '../authProvider/auth';
 
 function Overview() {
   // const navigate = useNavigate();
-  const [account, setAccount] = useState(0)
-  const [totalReward, setTotalReward] = useState(0)
+  const [account, setAccount] = useState(0);
+  const [totalReward, setTotalReward] = useState(0);
 
-  const email = localStorage.getItem('email')
+  const { token } = isAuthenticated();
+
+  const email = localStorage.getItem('email');
+  const sendUrl = `${process.env.REACT_APP_BASE_URL}/users/totalrewardsent`;
+  const balUrl = `${process.env.REACT_APP_BASE_URL}/users/user-balance`;
+  const tok = token.accessToken;
 
   const userBalance = useCallback(async () => {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}/users/user-balance`,
-      { email },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-    )
-    setAccount(response.data.balance)
-  }, [email])
+    const response = await sendRewardToTeacher(balUrl, { email }, tok);
+    setAccount(response.data.balance);
+  }, [email]);
 
   const totalSent = useCallback(async () => {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}/users/totalrewardsent`,
-      { email },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-    )
-    // console.log('here',response.data)
-    setTotalReward(response.data.total)
-  }, [email])
+    const response = await sendRewardToTeacher(sendUrl, { email }, tok);
+    setTotalReward(response.data.total);
+  }, [email]);
 
   useEffect(() => {
-    userBalance()
-    totalSent()
-  }, [totalSent, userBalance])
+    userBalance();
+    totalSent();
+  }, [totalSent, userBalance]);
 
   return (
     <div className="mt-[3%] w-[100%] md:ml-[40%] md:w-[70%] sm-[700px]:ml-[46%] ml-[30%] mr-[4rem] mb-[5%]">
@@ -143,7 +131,7 @@ function Overview() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Overview
+export default Overview;

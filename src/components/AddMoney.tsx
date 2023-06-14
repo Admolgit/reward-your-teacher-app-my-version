@@ -11,6 +11,7 @@ export const AddMoney = () => {
   const { addToast } = useToasts()
   
   const url = `${process.env.REACT_APP_BASE_URL}/paystack/pay`;
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setData((data) => ({ ...data, [e.target.name]: e.target.value }))
   }
@@ -20,18 +21,16 @@ export const AddMoney = () => {
       e.preventDefault();
 
       //Following Caleb's guide here
-      const res = await axios.get(`${url}?email=${data.email}&amount=${data.amount}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+      const res = await axios.get(`${url}?email=${data.email}&amount=${data.amount}`);
+
+      console.log(res, "RES")
       
-        if(!res.data.error){
-          window.location.replace(res.data.url);
-        }
-        if(res?.data?.error){
-          addToast(res?.data?.message || res?.data?.message || "no response", { appearance: 'error' })
-        }
+        // if(!res.data.error){
+        //   window.location.replace(res.data.url);
+        // }
+        // if(res?.data?.error){
+        //   addToast(res?.data?.message || res?.data?.message || "no response", { appearance: 'error' })
+        // }
     }catch(err: any) {
       addToast(err?.response?.data?.message || err?.message || "no response", { appearance: 'error' })
     }

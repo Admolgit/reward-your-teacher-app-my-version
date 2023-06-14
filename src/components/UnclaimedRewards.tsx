@@ -60,4 +60,4 @@ const UnclaimedRewards = () => {
   )
 }
 
-export default UnclaimedRewards
+export default UnclaimedRewards;

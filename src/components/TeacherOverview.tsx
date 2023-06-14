@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios, { AxiosResponse } from 'axios';
+import Pagination from '../Pagination/Pagination';
+import { Paginate } from '../Pagination/Paginate';
 
 interface notificationProps {
   id: string;
@@ -12,7 +14,7 @@ interface notificationProps {
 const MostRecent = (props: any) => {
   return (
     <div className="flex justify-between font-inter font-[400] text-[14px] mx-10">
-      <div className="mb-5">
+      <div className="mb-2">
         <div className="text-[#03435F]">{props.content}</div>
         <div className="text-[#C4C4C4]">
           Date: {props.date.split('T')[0]} Time:{' '}
@@ -31,6 +33,17 @@ const MostRecent = (props: any) => {
 function TeacherOverview(id: any) {
   const [balance, setBalance] = useState(0);
   const [notifications, setNotifications] = useState([]);
+
+  const [count] = useState(4);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  let dataCount = notifications.length;
+
+    const Datas = Paginate(notifications, currentPage, count);
+
+    const handleChange = (page: number) => {
+      setCurrentPage(page);
+    };
 
   const getBalance = async () => {
     const url = `${process.env.REACT_APP_BASE_URL}/teacher`;
@@ -74,8 +87,13 @@ function TeacherOverview(id: any) {
     recentNotifications();
   }, []);
 
+  if (dataCount === 0)
+    return (
+      <div className="ml-[4rem] text-treColor2 mt-[3rem]">No data found</div>
+    );
+
   return (
-    <div className="relative w-[80%] overflow-scroll ml-[295px] mr-[4rem] pl-[85px] h-[985px]">
+    <div className="relative w-[80%] overflow-scroll ml-[295px] mr-[4rem] pl-[85px] h-[100%]">
       <h1 className="font-[600] text-[32px] leading-[39px] font-inter text-[#03435f] mt-[40px]">
         My Dashboard
       </h1>
@@ -130,7 +148,7 @@ function TeacherOverview(id: any) {
 
           <div className="rounded bg-white shadow-md shadow-zinc-200 font-inter">
             <div className="flex justify-between mx-10 font-[600] text-[16px] items-center">
-              <div className="mt-10 text-[#03435F] font-[600] text-[16px]">
+              <div className="mt-5 text-[#03435F] font-[600] text-[16px]">
                 <h1>Most Recent</h1>
               </div>
               <div className="mt-10 rounded-full w-58 h-39 bg-[#55A630]">
@@ -141,7 +159,7 @@ function TeacherOverview(id: any) {
               <hr className="w-full pb-[4%]" />
             </div>
             <div>
-              {notifications.map((notification: notificationProps) => {
+              {Datas.map((notification: notificationProps) => {
                 return (
                   <MostRecent
                     key={notification.id}
@@ -154,6 +172,12 @@ function TeacherOverview(id: any) {
           </div>
         </div>
       </div>
+      <Pagination
+        itemsCount={dataCount}
+        pageSize={count}
+        currentPage={currentPage}
+        onPageChange={handleChange}
+      />
     </div>
   );
 }

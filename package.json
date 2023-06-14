@@ -19,6 +19,7 @@
     "axios": "^0.27.2",
     "firebase": "^9.9.0",
     "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-google-login": "^5.2.2",
@@ -59,6 +60,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.195",
     "autoprefixer": "^10.4.7",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.3"
