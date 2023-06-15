@@ -4,6 +4,8 @@ import SendRewardProfile from './SendRewardProfile';
 import SendReward from './SendReward';
 import { listAllTeachers, listProfile } from '../customApi/teacherApi';
 import isAuthenticated from '../authProvider/auth';
+import Pagination from '../Pagination/Pagination';
+import { Paginate } from '../Pagination/Paginate';
 
 // types for list of teachers
 interface ListOfTeachersProps {
@@ -23,6 +25,16 @@ const ListOfTeachers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [showSendReward, setShowSendReward] = useState(false);
+
+  const [count] = useState(10);
+
+  let dataCount = listOfTeachers.length;
+
+  const Datas = Paginate(listOfTeachers, currentPage, count);
+
+  const handleChange = (page: number) => {
+    setCurrentPage(page);
+  };
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [id, setId] = useState('');
   const { addToast } = useToasts();
@@ -35,10 +47,10 @@ const ListOfTeachers = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profile, setProfile] = useState({});
   const tok = token.accessToken;
-  
+
   const getTeacherList = useCallback(async () => {
     try {
-      const url = `${ process.env.REACT_APP_BASE_URL}/teachers/teachers?page=${1}perPage=${10}`;
+      const url = `${process.env.REACT_APP_BASE_URL}/teachers/teachers`;
 
       const teachers = await listAllTeachers(url, tok);
 
@@ -58,57 +70,11 @@ const ListOfTeachers = () => {
     getTeacherList();
   }, [getTeacherList]);
 
-  // when no data is loaded, show loading
-  if (isLoading) {
-    return <div className="text-[18px] justify-items-center">Loading...</div>;
-  }
-
-  // write a function that paginate number teachers to show per page
-  const paginate = (pageNumber: number) => {
-    const startIndex = (pageNumber - 1) * 10;
-    const endIndex = pageNumber * 10;
-    return listOfTeachers.length > 0
-      ? listOfTeachers.slice(startIndex, endIndex)
-      : [];
-  };
-
-  // implement the pagination function
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const paginatedTeachers = paginate(currentPage);
-  // Define Pagination
-  const Pagination: any = () => {
-    const pageNumbers: number[] = [];
-    for (let i = 1; i <= Math.ceil(listOfTeachers.length / 5); i++) {
-      pageNumbers.push(i);
-    }
-
-    return pageNumbers.map((number) => (
-      <li
-        key={number}
-        className="page-item list-none ml-[20px] relative bottom-[10%] text-[#03435F] mt-[3rem] text-[18px] cursor-pointer"
-      >
-        <button
-          className="page-link fixed bottom-2 active:bg-green-600 pl-[5px] pr-[5px]"
-          onClick={() => handlePageChange(number)}
-        >
-          {number}
-        </button>
-      </li>
-    ));
-  };
-
   const handleClick = (id: string) => {
     setShowModal(true);
     setId(id);
     getProfile(id.toString());
   };
-
-  // useEffect(() => {
-  //   handleClick(id)
-  // }, [showModal, id]);
 
   const handleClose = () => {
     setShowModal(false);
@@ -133,22 +99,25 @@ const ListOfTeachers = () => {
     }
   };
 
+  console.log(Datas)
+
   return (
-    <div>
-      <table className="text-[#03435F]">
-        <thead>
-          <tr className="w-[900px] grid grid-cols-4 gap-[7%] bg-gray-100 p-[1%] text-[16px] text-[#03435F] font-[400] font-inter">
-            <th className="text-start">Name</th>
-            <th className="text-start">School</th>
-            <th className="text-start">Position</th>
-            <th className="text-start">Period of teaching</th>
-          </tr>
-        </thead>
-        <tbody>
-          {!isLoading &&
-            paginatedTeachers.length > 0 &&
-            paginatedTeachers.map(
-              (paginatedTeacher: ListOfTeachersProps, idx) => {
+    <>
+      <div>
+        <table className="text-[#03435F]">
+          <thead>
+            <tr className="w-[1000px] grid grid-cols-5 gap-[7%] bg-gray-100 p-[1%] text-[16px] text-[#03435F] font-[400] font-inter">
+              <th className="text-start">Name</th>
+              <th className="text-start">School</th>
+              <th className="text-start">Position</th>
+              <th className="text-start">School Type</th>
+              <th className="text-start">Period of teaching</th>
+            </tr>
+          </thead>
+          <tbody>
+            {!isLoading &&
+              Datas.length > 0 &&
+              Datas.map((paginatedTeacher: ListOfTeachersProps) => {
                 return (
                   <tr
                     onClick={() =>
@@ -156,34 +125,39 @@ const ListOfTeachers = () => {
                         paginatedTeacher.id ? paginatedTeacher.id : '',
                       )
                     }
-                    className="grid grid-cols-4 gap-[7%] cursor-pointer p-[1%] text-[14px] text-[#03435F] font-[400] font-inter"
-                    key={idx}
+                    className="grid grid-cols-5 gap-[7%] cursor-pointer p-[1%] text-[14px] text-[#03435F] font-[400] font-inter"
+                    key={paginatedTeacher.id}
                   >
                     <td>{paginatedTeacher.fullName}</td>
                     <td>{paginatedTeacher.school}</td>
+                    <td>{paginatedTeacher.position}</td>
                     <td>{paginatedTeacher.schoolType}</td>
                     <td>
                       {paginatedTeacher.startYear} - {paginatedTeacher.endYear}
                     </td>
                   </tr>
                 );
-              },
-            )}
-        </tbody>
-      </table>
-
-      <div className="flex justify-center">
-        <Pagination />
+              })}
+          </tbody>
+        </table>
+        {showModal && (
+          <SendRewardProfile
+            profile={profile}
+            close={handleClose}
+            showSendReward={setShowSendReward}
+          />
+        )}
+        {showSendReward && <SendReward close={setShowSendReward} />}
       </div>
-      {showModal && (
-        <SendRewardProfile
-          profile={profile}
-          close={handleClose}
-          showSendReward={setShowSendReward}
+      <div className="z-10">
+        <Pagination
+          itemsCount={dataCount}
+          pageSize={count}
+          currentPage={currentPage}
+          onPageChange={handleChange}
         />
-      )}
-      {showSendReward && <SendReward close={setShowSendReward} />}
-    </div>
+      </div>
+    </>
   );
 };
 
