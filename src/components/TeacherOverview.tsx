@@ -5,10 +5,10 @@ import { Paginate } from '../Pagination/Paginate';
 
 interface notificationProps {
   id: string;
-  content: string,
-  recieverId: string,
-  createdAt: string,
-  updatedAt: string
+  content: string;
+  recieverId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const MostRecent = (props: any) => {
@@ -39,11 +39,11 @@ function TeacherOverview(id: any) {
 
   let dataCount = notifications.length;
 
-    const Datas = Paginate(notifications, currentPage, count);
+  const Datas = Paginate(notifications, currentPage, count);
 
-    const handleChange = (page: number) => {
-      setCurrentPage(page);
-    };
+  const handleChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const getBalance = async () => {
     const url = `${process.env.REACT_APP_BASE_URL}/teacher`;
@@ -87,10 +87,10 @@ function TeacherOverview(id: any) {
     recentNotifications();
   }, []);
 
-  if (dataCount === 0)
-    return (
-      <div className="ml-[4rem] text-treColor2 mt-[3rem]">No data found</div>
-    );
+  // if (dataCount === 0)
+  //   return (
+  //     <div className="ml-[4rem] text-treColor2 mt-[3rem]">No data found</div>
+  //   );
 
   return (
     <div className="relative w-[80%] overflow-scroll ml-[295px] mr-[4rem] pl-[85px] h-[100%]">
@@ -172,12 +172,12 @@ function TeacherOverview(id: any) {
           </div>
         </div>
       </div>
-      <Pagination
+      {/* <Pagination
         itemsCount={dataCount}
         pageSize={count}
         currentPage={currentPage}
         onPageChange={handleChange}
-      />
+      /> */}
     </div>
   );
 }

@@ -26,7 +26,7 @@ const ListOfTeachers = () => {
   const [showModal, setShowModal] = useState(false);
   const [showSendReward, setShowSendReward] = useState(false);
 
-  const [count] = useState(10);
+  const [count] = useState(8);
 
   let dataCount = listOfTeachers.length;
 

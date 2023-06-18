@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import isAuthenticated from '../authProvider/auth';
 import { getNotification } from '../customApi/studentApi';
+import Pagination from '../Pagination/Pagination';
+import { Paginate } from '../Pagination/Paginate';
 
 const Notify = (props: any) => {
   return (
@@ -27,6 +29,17 @@ const Notifications = () => {
   const [studentNotifications, setStudentNotifications] = useState([]);
   const {token, user} = isAuthenticated();
 
+  const [count] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  let dataCount = studentNotifications.length;
+
+  const Datas = Paginate(studentNotifications, currentPage, count);
+
+  const handleChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   const tok = token.accessToken;
   const senderId = user.id
   const url = `${process.env.REACT_APP_BASE_URL}/users/student-notification/${senderId}`;
@@ -48,7 +61,7 @@ const Notifications = () => {
     <div className="sm:ml-[40%] sm-[740px]:ml-[42%] sm-[700px]:ml-[44%] ml-[30%] font-inter mt-[3%] w-[100%] mr-[10%]">
       <h1 className="text-[32px] font-[600] text-[#03435F]">Notifications</h1>
       <hr className="mb-[5%]" />
-      {studentNotifications.map((items: any) => {
+      {Datas.map((items: any) => {
         return (
           <Notify
             index={items.id}
@@ -58,6 +71,12 @@ const Notifications = () => {
           />
         );
       })}
+      <Pagination
+          itemsCount={dataCount}
+          pageSize={count}
+          currentPage={currentPage}
+          onPageChange={handleChange}
+        />
     </div>
   );
 };

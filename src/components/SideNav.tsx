@@ -41,7 +41,7 @@ function SideNav() {
   }
 }
   return (
-    <div className="fixed z-10 top-[7rem] w-[292px] h-[90vh] left-0 drop-shadow-xl bg-[#ffffff]">
+    <div className="fixed z-10 top-[7rem] w-[292px] h-[90vh] left-0 drop-shadow-xl bg-[#ffffff] sm:hidden ">
       <Link to="/students-dashboard">
         <div
           className={bg.overview ? secondStyle : style}

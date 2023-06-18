@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Modal } from 'antd';
 import Pagination from '../Pagination/Pagination';
 import { Paginate } from '../Pagination/Paginate';
-import axios from 'axios';
+import { listAllTeachers } from '../customApi/teacherApi';
 import Appreciation from '../pages/Appreciation';
+import isAuthenticated from '../authProvider/auth';
 
 const Notify = (props: any) => {
   return (
@@ -12,7 +13,10 @@ const Notify = (props: any) => {
       className="flex justify-between rounded bg-white shadow-md shadow-zinc-800 font-inter h-[100px] px-[3%] mb-[3%]"
     >
       <div className="mt-[2%] text-[14px] text-[#21334F]">
-        <div className="font-[600]">Date: {props.date.split('T')[0]} Time: {props.date.split('T')[1].split('.')[0]}</div>
+        <div className="font-[600]">
+          Date: {props.date.split('T')[0]} Time:{' '}
+          {props.date.split('T')[1].split('.')[0]}
+        </div>
         <div className="font-[400]">{props.message}</div>
       </div>
       <div className="mt-[2%] text-right font-[400] text-[14px]">
@@ -38,29 +42,26 @@ export const TeacherNotification = () => {
   const [count] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const { token, user } = isAuthenticated();
+
   const [teacherNotification, setTeacherNotification] = useState([]);
 
   let dataCount = teacherNotification.length;
 
-    const Datas = Paginate(teacherNotification, currentPage, count);
+  const Datas = Paginate(teacherNotification, currentPage, count);
 
-    const handleChange = (page: number) => {
-      setCurrentPage(page);
-    };
+  const handleChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const getTeacherNotification = useCallback(async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const recieverId = localStorage.getItem('teacherId');
-      const teachers = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/teachers/notification/${recieverId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
+      const tok = token.accessToken;
+      const url = `${process.env.REACT_APP_BASE_URL}/teachers/notification/${recieverId}`;
+      const teachers = await listAllTeachers(url, tok);
+      console.log(teachers);
       if (teachers.data) {
         setTeacherNotification(teachers?.data?.notification);
       }
@@ -74,15 +75,10 @@ export const TeacherNotification = () => {
     getTeacherNotification();
   }, []);
 
-  if(loading) {
-    <p>Teacher notifications loading...</p>
+  if (loading) {
+    return <p className="font-inter ml-[30%] mr-[10%] mt-[2%] w-[100%]">Teacher notifications loading...</p>;
   }
 
-  if (dataCount === 0)
-    return (
-      <div className="ml-[4rem] text-treColor2 mt-[3rem]">No data found</div>
-    );
-  
   return (
     <>
       <Modal
@@ -91,7 +87,10 @@ export const TeacherNotification = () => {
         onCancel={closeModal}
         footer={null}
       >
-        <Appreciation onClose={closeModal} appreciationData={teacherNotification} />
+        <Appreciation
+          onClose={closeModal}
+          appreciationData={teacherNotification}
+        />
       </Modal>
       <div className="font-inter ml-[30%] mr-[10%] mt-[2%] w-[100%]">
         <h1 className="font-[600] text-[32px] text-[#03435F]">Notifications</h1>
@@ -109,11 +108,11 @@ export const TeacherNotification = () => {
           );
         })}
         <Pagination
-        itemsCount={dataCount}
-        pageSize={count}
-        currentPage={currentPage}
-        onPageChange={handleChange}
-      />
+          itemsCount={dataCount}
+          pageSize={count}
+          currentPage={currentPage}
+          onPageChange={handleChange}
+        />
       </div>
     </>
   );

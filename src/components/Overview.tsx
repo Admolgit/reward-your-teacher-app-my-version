@@ -33,7 +33,7 @@ function Overview() {
   }, [totalSent, userBalance]);
 
   return (
-    <div className="mt-[3%] w-[100%] md:ml-[40%] md:w-[70%] sm-[700px]:ml-[46%] ml-[30%] mr-[4rem] mb-[5%]">
+    <div className="mt-[3%] w-[100%] sm:h-[100%] md:ml-[40%] md:w-[70%] sm-[700px]:ml-[46%] ml-[30%] mr-[4rem] mb-[5%] sm:ml-0 sm:w-[100%] ">
       <h1 className="mb-[1%] font-[600] text-[25px] text-[#03435F]">
         My Dashboard
       </h1>

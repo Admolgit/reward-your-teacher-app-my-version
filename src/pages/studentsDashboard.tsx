@@ -8,7 +8,7 @@ function StudentsDashboard() {
         <div>
             <PageHeader headertext="Rewards Status" />
             <div className='flex'> 
-            <SideNav/>
+            <SideNav />
             <Outlet />
             </div>
         </div>
