@@ -25,12 +25,12 @@ export const AddMoney = () => {
 
       console.log(res, "RES")
       
-        // if(!res.data.error){
-        //   window.location.replace(res.data.url);
-        // }
-        // if(res?.data?.error){
-        //   addToast(res?.data?.message || res?.data?.message || "no response", { appearance: 'error' })
-        // }
+        if(!res.data.error){
+          window.location.replace(res.data.url);
+        }
+        if(res?.data?.error){
+          addToast(res?.data?.message || res?.data?.message || "no response", { appearance: 'error' })
+        }
     }catch(err: any) {
       addToast(err?.response?.data?.message || err?.message || "no response", { appearance: 'error' })
     }

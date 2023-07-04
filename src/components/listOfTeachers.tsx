@@ -6,6 +6,7 @@ import { listAllTeachers, listProfile } from '../customApi/teacherApi';
 import isAuthenticated from '../authProvider/auth';
 import Pagination from '../Pagination/Pagination';
 import { Paginate } from '../Pagination/Paginate';
+import AllTeachers from './AllTeachers'
 
 // types for list of teachers
 interface ListOfTeachersProps {
@@ -98,8 +99,8 @@ const ListOfTeachers = () => {
       );
     }
   };
-
-  console.log(Datas)
+  
+  <AllTeachers teachers={listOfTeachers} />
 
   return (
     <>
