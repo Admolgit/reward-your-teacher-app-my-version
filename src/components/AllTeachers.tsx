@@ -6,6 +6,7 @@ import ListOfTeachers from '../components/listOfTeachers'
 
 function AllTeachers(props: any) {
   const data = props.data
+  console.log(props, "TEACHER")
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [hidden, setHidden] = useState('')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

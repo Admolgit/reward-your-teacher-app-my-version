@@ -9,7 +9,8 @@ const Notify = (props: any) => {
     <div className="flex text-[14px] mb-[3%] p-[2%] shadow-md rounded justify-between">
       <div className="flex flex-col text">
         <div className="mb-[2%]">
-          <span className="font-[600]">{props.date.split('T')[0]}</span>, {props.date.split('T')[1].split('.')[0]}
+          <span className="font-[600]">{props.date.split('T')[0]}</span>,{' '}
+          {props.date.split('T')[1].split('.')[0]}
         </div>
         <div className="font-[400] text-[#21334F]">{props.message}</div>
       </div>
@@ -27,7 +28,7 @@ const Notify = (props: any) => {
 
 const Notifications = () => {
   const [studentNotifications, setStudentNotifications] = useState([]);
-  const {token, user} = isAuthenticated();
+  const { token, user } = isAuthenticated();
 
   const [count] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,17 +42,17 @@ const Notifications = () => {
   };
 
   const tok = token.accessToken;
-  const senderId = user.id
+  const senderId = user.id;
   const url = `${process.env.REACT_APP_BASE_URL}/users/student-notification/${senderId}`;
 
   const notifications = async () => {
     try {
       const notificationsStudent: any = await getNotification(url, tok);
-      setStudentNotifications(notificationsStudent.data.notification)
+      setStudentNotifications(notificationsStudent.data.notification);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   React.useEffect(() => {
     notifications();
@@ -72,11 +73,11 @@ const Notifications = () => {
         );
       })}
       <Pagination
-          itemsCount={dataCount}
-          pageSize={count}
-          currentPage={currentPage}
-          onPageChange={handleChange}
-        />
+        itemsCount={dataCount}
+        pageSize={count}
+        currentPage={currentPage}
+        onPageChange={handleChange}
+      />
     </div>
   );
 };
